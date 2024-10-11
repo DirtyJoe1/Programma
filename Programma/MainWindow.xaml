@@ -7,6 +7,25 @@
         mc:Ignorable="d"
         Title="Programma" Height="600" Width="1000">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="6*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            
+        </StackPanel>
+        <StackPanel Grid.Row="1">
+            <DataGrid x:Name="Table" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="№" Binding="{Binding Id}"/>
+                    <DataGridTextColumn Header="ФИО" Binding="{Binding FIO}"/>
+                    <DataGridTextColumn Header="Отделение/Подразделение" Binding="{Binding Otdel}"/>
+                    <DataGridTextColumn Header="Дата установки" Binding="{Binding Setup, StringFormat='{}{0:dd/MM/yyyy}'}"/>
+                    <DataGridTextColumn Header="Дата выпуска" Binding="{Binding Start, StringFormat='{}{0:dd/MM/yyyy}'}"/>
+                    <DataGridTextColumn Header="Дата окончания" Binding="{Binding End, StringFormat='{}{0:dd/MM/yyyy}'}"/>
+                    <DataGridTextColumn Header="Статус" Binding="{Binding Status}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
     </Grid>
 </Window>
