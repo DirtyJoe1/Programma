@@ -1,55 +1,76 @@
-﻿using System.Text;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using OfficeOpenXml;
-using Programma.Resources;
+using Programma.Resources.Classes;
 
 namespace Programma
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    /// 
+    
     public partial class MainWindow : Window
     {
+        public string filePath = "Resources/data.xlsx";
+        private bool _hasUnsavedChanges = false;
         public MainWindow()
         {
+            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
             InitializeComponent();
-            Table.ItemsSource = ReadExcelFile("Resources/data.xlsx");
+            UpdateTable();
         }
-        public List<DataModel> ReadExcelFile(string filePath)
+        protected override void OnClosing(CancelEventArgs e)
         {
-            List<DataModel> data = new List<DataModel>();
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            using (var package = new ExcelPackage(filePath))
+            base.OnClosing(e);
+            var result = MessageBox.Show("Сохранять ли изменения в файл?", "Внимание!", MessageBoxButton.YesNoCancel);
+            switch (result)
             {
-                var worksheet = package.Workbook.Worksheets.First();
-                for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
-                {
-                    try
-                    {
-                        var rowData = new DataModel
-                        {
-                            Id = Int16.Parse(worksheet.Cells[row, 1].Value.ToString()),
-                            FIO = worksheet.Cells[row, 2].Value.ToString(),
-                            Otdel = worksheet.Cells[row, 3].Value.ToString(),
-                            Setup = DateTime.Parse(worksheet.Cells[row, 4].Value.ToString()),
-                            Start = DateTime.Parse(worksheet.Cells[row, 5].Value.ToString()),
-                            End = DateTime.Parse(worksheet.Cells[row, 6].Value.ToString()),
-                            Status = worksheet.Cells[row, 7].Value.ToString(),
-                        };
-                        data.Add(rowData);
-                    }
-                    catch (Exception) {}
-                }
+                case MessageBoxResult.Yes:
+                    var dataTable = ExcelHelper.GetDataTableFromDataGrid<DataModel>(Table.ItemsSource);
+                    ExcelHelper.SaveDataGrid(dataTable, filePath);
+                    break;
+                case MessageBoxResult.No:
+                    break;
+                case MessageBoxResult.Cancel:
+                    e.Cancel = true;
+                    break;
             }
-            return data;
+        }
+        public void UpdateTable()
+        {
+            Table.ItemsSource = ExcelHelper.ReadExcelFile(filePath);
+        }
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var dataTable = ExcelHelper.GetDataTableFromDataGrid<DataModel>(Table.ItemsSource);
+                ExcelHelper.SaveDataGrid(dataTable, filePath);
+                MessageBox.Show("Успешно сохранено");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Возникла ошибка " + ex.Message);
+            }    
+        }
+
+        private void AddNewEntryButton_Click(object sender, RoutedEventArgs e)
+        {
+            new AddNewEntryWindow(this).Show();
         }
     }
 }

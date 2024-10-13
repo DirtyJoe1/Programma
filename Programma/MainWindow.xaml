@@ -4,26 +4,40 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Programma"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="Programma" Height="600" Width="1000">
+        Title="Programma" Height="600" Width="1200">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="6*"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0">
-            
+        <StackPanel Grid.Row="0" Margin="10" Orientation="Horizontal">
+            <Button VerticalAlignment="Center"
+                    x:Name="SaveButton"
+                    Click="SaveButton_Click"
+                    Width="80"
+                    Height="80"
+                    Content="{materialDesign:PackIcon Kind=ContentSave,Size=40}"/>
+            <Button VerticalAlignment="Center"
+                    x:Name="AddNewEntryButton"
+                    Width="80"
+                    Height="80"
+                    Content="{materialDesign:PackIcon Kind=Add,Size=40}" Click="AddNewEntryButton_Click"/>
         </StackPanel>
         <StackPanel Grid.Row="1">
-            <DataGrid x:Name="Table" AutoGenerateColumns="False">
+            <DataGrid x:Name="Table" AutoGenerateColumns="False" GridLinesVisibility="All">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="№" Binding="{Binding Id}"/>
                     <DataGridTextColumn Header="ФИО" Binding="{Binding FIO}"/>
                     <DataGridTextColumn Header="Отделение/Подразделение" Binding="{Binding Otdel}"/>
+                    <!--Бага с сортировкой даты по возрастанию-->
                     <DataGridTextColumn Header="Дата установки" Binding="{Binding Setup, StringFormat='{}{0:dd/MM/yyyy}'}"/>
                     <DataGridTextColumn Header="Дата выпуска" Binding="{Binding Start, StringFormat='{}{0:dd/MM/yyyy}'}"/>
                     <DataGridTextColumn Header="Дата окончания" Binding="{Binding End, StringFormat='{}{0:dd/MM/yyyy}'}"/>
-                    <DataGridTextColumn Header="Статус" Binding="{Binding Status}"/>
+                    <!--Бага с сортировкой даты по возрастанию-->
+                    <DataGridComboBoxColumn Header="Статус" SelectedItemBinding="{Binding Status}" ItemsSource="{Binding Source={StaticResource enum}}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>

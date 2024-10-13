@@ -10,6 +10,12 @@
 
   <ItemGroup>
     <PackageReference Include="EPPlus" Version="7.4.1" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\Controls\" />
+    <Folder Include="Resources\Style\" />
   </ItemGroup>
 
   <ItemGroup>
